@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ultraservice SRL – React One‑Page</title>
+    <!-- React + ReactDOM + Babel for Live Server / no build -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Bootstrap Icons (identic stilului de pe site) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+      :root{
+        --brand:#e6332a; /* rosu principal */
+        --dark:#1a1a1a;
+        --text:#333;
+        --muted:#6b7280;
+        --bg:#fafafa;
+        --slide-width: 1200px;
+      }
+      *{box-sizing:border-box}
+      html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif;color:var(--text);background:#fff}
+      a{color:inherit;text-decoration:none}
+      img{max-width:100%;display:block}
+      .container{max-width:1200px;margin:0 auto;padding:0 16px}
+      #about .container {max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-around; flex-direction: row; align-items: center;}
+      .lead{width: 50%;}
+      .btn{display:inline-block;background:var(--brand);color:#fff;padding:12px 18px;border-radius:6px;font-weight:600;transition:filter .2s}
+      .btn:hover{filter:brightness(.95)}
+
+      /* HEADER 1: top bar with logo, menu, lang switch */
+      .topbar{border-bottom:1px solid #eee}
+      .topbar{position: sticky; top: 0; z-index: 1000; background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+      .topbar .row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+      .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:22px }
+      .logo-img { height:70px; width:auto; display:block }   /* ajustează 40 dacă vrei mai mare */
+      @media (max-width:960px){ .logo-img{ height:34px } }
+
+      nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0}
+      nav a{font-weight:600}
+      nav a:hover{color:var(--brand)}
+      .lang{display:flex;gap:8px;align-items:center}
+      .lang button{padding:6px 10px;border:1px solid #e5e7eb;background:#fff;border-radius:6px;cursor:pointer;font-weight:700}
+      .lang button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+      /* HEADER 2: info band */
+      .infobar{background:#f8f8f8}
+      .infobar-container{display: flex; justify-self: center; width: 1200px;}
+      .infobar .row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:14px 0;align-items:center; width: 70%}
+      .info-item{display:flex;align-items:center;gap:10px}
+      .info-ico{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #eee;display:grid;place-items:center;color:var(--brand);font-size:16px}
+      .info-ico:hover{scale:1.2}
+      .info-text a:hover{color:var(--brand)}
+      .hotline{background:var(--brand);color:#fff; width: 30%;padding-bottom: 4px; margin-top: 33px; position: relative; float:right; }
+      @media (min-width: 1200px) {.hotline:after {content: ""; width: 5000px; height: 100%; background-color: var(--brand); left: 100%; top: 0px; position: absolute;}}
+      .hotline-row{margin: 10px 10px;}
+      .hotline .row{display:flex;justify-content:center; padding:10px 0; gap:10px}
+      
+
+      /* HEADER 3: hero slider */
+      .hero{position:relative;overflow:hidden}
+      .hero-slide{position:relative;min-height:440px;display:grid;place-items:center;background:#0b0b0b}
+      .hero-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.65;filter:brightness(.9)}
+      .hero-content{position:relative;z-index:2;max-width:1000px;text-align:left;color:#fff;padding:32px 16px}
+      .hero-kicker{display:inline-block;background:#fff;color:#111;padding:8px 12px;border-radius:999px;font-size:12px;margin-bottom:16px;font-weight:700}
+      .hero h1{font-size:44px;line-height:1.1;margin:0 0 12px;font-weight:900}
+      .dots{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;display:flex;gap:8px}
+      .dot{width:8px;height:8px;border-radius:999px;background:#ffffff88}
+      .dot.active{background:#fff}
+      .arrow{position:absolute;top:50%;transform:translateY(-50%);background:#00000066;color:#fff;border:none;border-radius:999px;width:42px;height:42px;display:grid;place-items:center;cursor:pointer}
+      .arrow.left{left:12px}.arrow.right{right:12px}
+
+      /* Sections */
+      main{min-height:60vh}
+      section{padding:75px 0}
+      .section-title{font-size:40px;font-weight:900;display:flex; gap:12px; padding-bottom: 25px;}
+      #about.section-title{justify-content: space-between; align-items:center;width: 50%;}
+      .section-title .accent{width:60px;height:6px;background:var(--brand);border-radius:999px;transform:translateY(-8px)}
+      .lead{color:#4b5563;max-width:920px}
+      .page h1{font-size:40px;margin:0 0 14px}
+      .page h2{margin-top:28px}
+      .page .muted{color:#6b7280}
+
+      /* Simple carousel used for brands/certs/clients */
+      .carousel{position:relative;overflow:hidden}
+      .carousel-track{display:flex;transition:transform .5s ease}
+      .carousel-slide{min-width:100%}
+      .carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:14px}
+      .carousel-dot{width:8px;height:8px;border-radius:50%;background:#ddd}
+      .carousel-dot.active{background:var(--brand)}
+
+      .logo-grid{display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:center}
+      .logo-box{flex:0 1 180px;display:grid;place-items:center;border:1px solid #eee;border-radius:16px;padding:24px;min-height:120px;background:#fff}
+      .logo-box img{max-height:64px;object-fit:contain}
+
+      .cert-img{border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+      #certs .logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;justify-items:center;align-items:start}
+      #certs .logo-grid .cert-img{width:100%;height:auto}
+
+      /* Map */
+      .map frame, .map iframe{border:0;width:100%;height:460px;border-radius:12px}
+
+      /* Footer */
+      .footer{color:#e5e7eb; }
+      .footer{background-image: url("./assets/img/post-img001.jpg"); background-repeat: no-repeat; background-size: cover; background-position: center;
+              background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("./assets/img/post-img001.jpg");}
+      .footer a{color:#e5e7eb}
+      .footer .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+      .footer h4{margin:0 0 10px;font-size:26px}
+      .meta{color:#7d7d7d}
+      .col1 .item a {text-transform: uppercase;}
+      .footer .item{margin:30px 0;display:flex;gap:12px;align-items:flex-start; color: #7d7d7d;}
+      .footer .item a:hover{color: var(--brand); }
+      .footer .item a{color: #7d7d7d}
+      .footer .ico{width:26px;height:26px;border-radius:50%;background:#1f2937;display:grid;place-items:center;color:#7d7d7d; flex:0 0 26px}
+      .footer-bottom{background:#0b0b0b;color:#7d7d7d;padding:16px 0}
+      .footer-bottom a{color:#7d7d7d;text-decoration:none}
+      .footer-bottom a:hover {color:var(--brand);text-decoration:none; }
+
+      /* Responsive */
+      @media (max-width: 960px){
+        .infobar .row{grid-template-columns:1fr}
+        .logo-grid{flex-wrap:wrap}
+        .logo-box{min-width:44%}
+        .footer .cols{grid-template-columns:1fr}
+        .hero h1{font-size:34px}
+      }
+
+    /* Back-to-top floating button */
+      .toTop{
+        position:fixed; right:18px; bottom:96px; /* 96px ca să nu se calce cu Jivo */
+        width:46px; height:46px; border:none; border-radius:50%;
+        background:var(--brand); color:#fff; cursor:pointer;
+        display:none; align-items:center; justify-content:center;
+        box-shadow:0 10px 20px rgba(0,0,0,.25); z-index:9999;
+        transition:opacity .2s, transform .2s;
+      }
+      .toTop.show{ display:flex; }
+      .toTop:hover{ transform:translateY(-2px); }
+      @media (max-width: 960px){
+        .toTop{ bottom:120px; } /* pe mobil lăsăm un pic mai sus */
+      }  
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useMemo, useRef } = React;
+
+      // ---------- i18n ----------
+      const DICT = {
+        ro: {
+          menu: { home:'Acasă', about: 'Despre', clients:'Clienți', certificates:'Certificate', brands:'Branduri', contact:'Contact', terms:'Termeni', privacy:'Confidențialitate' },
+          callNow: 'Îți dăm cel mai bun!',
+          heroBtn: 'Află mai mult',
+          phone: 'Telefon', email: 'Poșta Electronică', address: 'Adresă',
+          hotline: 'Telefon: (+373 22) 837-777',
+          aboutTitle: 'Service Centru Ultra Service',
+          aboutText: 'Compania «Ultra Service» a fost fondată în decembrie 2008. La moment dispunem de un portofoliu bogat de clienți și parteneri. Asigurăm servicii de diagnosticare, reparație și întreținere a echipamentelor și dispozitivelor IT pe perioada garanției și post-garanție pentru o serie de brand-uri cu renume.',
+          clientsTitle:'Clienți',
+          certificatesTitle:'Certificate',
+          brandsTitle:'Cele mai populare brand-uri în portofoliul nostru',
+          mapTitle:'Ne găsești aici',
+          bankTitle:'Rechizitele bancare',
+          companyTitle:'Rechizitele companiei',
+          contactTitle:'Contactează-ne',
+          company:{ name:'“ULTRASERVICE” SRL',
+            legalAddress:'MD-2069 Chișinău str. Creangă Ion, 6/V',
+            tax:'Codul fiscal', taxId:'1008600059825', vat:'Cod TVA', vatId:'0505752' },
+          bank:{ code:'Codul băncii: VICBMD2X883, BC „Victoriabank” SA, fil. Nr.11 Chișinău',
+            settlement:'Cont de decontare: MDL 225121116',
+            iban:'MD62VI000000225121116MDL (Victoriabank)' },
+          contact:{ addr:'MD-2069 Calea Ieșilor, 10 Chișinău, Moldova', site:'http://ultraservice.md', work:'Luni - Vineri: 9:00-18:00; Sâmbăta: 10:00-14:00 (preluarea comenzilor și livrarea)' },
+          copyright:'Toate drepturile sunt rezervate.',
+          termsTitle:'Termeni și Condiții',
+          termsUpdated:'Ultima actualizare',
+          termsIntro:'Acești Termeni reglementează utilizarea site‑ului nostru și a serviciilor oferite. Accesând site‑ul, ești de acord cu toți termenii de mai jos.',
+          termsPoints:[
+            'Serviciile sunt prestate conform devizului acceptat și politicilor interne.',
+            'Programările pot fi reprogramate cu cel puțin 24h înainte.',
+            'Garanția se aplică numai lucrărilor efectuate de Ultraservice și în condiții normale de utilizare.',
+            'Datele personale sunt tratate conform Politicii de confidențialitate.',
+            'Ne rezervăm dreptul de a actualiza conținutul și prețurile fără notificare prealabilă.'
+          ],
+          privacyTitle:'Politica de confidențialitate',
+          privacyIntro:'Explicăm ce date colectăm, de ce și cum le protejăm.',
+          privacyPoints:[
+            'Colectăm nume, telefon, e‑mail și mesajele transmise prin formulare pentru a putea răspunde solicitărilor.',
+            'Păstrăm datele doar pe perioada necesară furnizării serviciilor ori conform obligațiilor legale.',
+            'Nu vindem și nu cedăm datele către terți, cu excepția partenerilor implicați direct în prestarea serviciului.',
+            'Poți solicita oricând acces, corectare sau ștergere — scrie la office@ultraservice.md.',
+            'Folosim cookie‑uri funcționale și de analiză pentru îmbunătățirea experienței.'
+          ]
+        },
+        ru: {
+          menu: { home:'Главная', about: 'О компании', clients:'Клиенты', certificates:'Сертификаты', brands:'Бренды', contact:'Контакты', terms:'Условия', privacy:'Конфиденциальность' },
+          callNow: 'Мы делаем лучше!',
+          heroBtn: 'Подробнее',
+          phone: 'Телефон', email: 'Эл. почта', address: 'Адрес',
+          hotline: 'Телефон: (+373 22) 837-777',
+          aboutTitle: 'Сервисный центр Ultra Service',
+          aboutText: 'Компания «Ultra Service» основана в декабре 2008. Мы обладаем обширным портфелем клиентов и партнёров. Проводим диагностику, ремонт и обслуживание IT‑оборудования в гарантийный и постгарантийный период для ряда мировых брендов.',
+          clientsTitle:'Клиенты',
+          certificatesTitle:'Сертификаты',
+          brandsTitle:'Самые популярные бренды в нашем портфеле',
+          mapTitle:'Мы на карте',
+          bankTitle:'Банковские реквизиты',
+          companyTitle:'Реквизиты компании',
+          contactTitle:'Свяжитесь с нами',
+          company:{ name:'ООО «ULTRASERVICE»',
+            legalAddress:'MD-2069 Кишинёв, ул. Иона Креянгэ, 6/V',
+            tax:'Фискальный код', taxId:'1008600059825', vat:'Код НДС', vatId:'0505752' },
+          bank:{ code:'Банковский код: VICBMD2X883, БК «Victoriabank» SA, фил. №11 Кишинёв',
+            settlement:'Банковский счет: MDL 225121116',
+            iban:'MD62VI000000225121116MDL (Victoriabank)' },
+          contact:{ addr:'MD-2069 Кишинёв, ул. Каля Ешилор, 10, Молдова', site:'http://ultraservice.md', work:'Пн‑Пт: 9:00‑18:00; Сб: 10:00‑14:00 (приём заказов и доставка)' },
+          copyright:'Все права защищены.',
+          termsTitle:'Условия и положения',
+          termsUpdated:'Последнее обновление',
+          termsIntro:'Эти Условия регулируют использование нашего сайта и предоставляемых услуг. Посещая сайт, вы соглашаетесь с положениями ниже.',
+          termsPoints:[
+            'Услуги предоставляются согласно согласованной смете и внутренним правилам.',
+            'Перенос записи возможен не позднее чем за 24 часа.',
+            'Гарантия распространяется только на работы Ultraservice при нормальной эксплуатации.',
+            'Персональные данные обрабатываются согласно Политике конфиденциальности.',
+            'Мы вправе обновлять контент и цены без предварительного уведомления.'
+          ],
+          privacyTitle:'Политика конфиденциальности',
+          privacyIntro:'Определяем, какие данные собираем, зачем и как защищаем.',
+          privacyPoints:[
+            'Собираем имя, телефон, e‑mail и сообщения из форм для ответа на запросы.',
+            'Храним данные только необходимый срок или по требованиям закона.',
+            'Не продаём и не передаём данные третьим лицам, кроме партнёров, участвующих в оказании услуги.',
+            'Вы можете запросить доступ, исправление или удаление — пишите на office@ultraservice.md.',
+            'Используем функциональные и аналитические cookie для улучшения сервиса.'
+          ]
+        }
+      };
+
+      // Asset folders (creează aceste 4 mape și plasează imaginile acolo)
+      const BASES = {
+        hero: './assets/hero/',
+        clients: './assets/clients/',
+        certs: './assets/certificates/',
+        brands: './assets/brands/'
+      };
+      // Liste de fișiere – schimbă cu numele reale din mapele tale
+      const ASSETS = {
+        hero: ['hero-1.jpg','hero-2.jpg'],
+        clients: ['client-1.png','client-2.png','client-3.png','client-4.png','client-5.png','client-6.png','client-7.png','client-8.jpg','client-9.png','client-10.png', 'client-11.png','client-12.jpg','client-13.png'],
+        certs: ['cert-1.jpg','cert-2.jpg','cert-3.jpg', 'cert-4.jpg','cert-5.jpg','cert-6.jpg','cert-7.jpg','cert-8.jpg','cert-9.jpg','cert-10.jpg'],
+        brands: ['brand-1.png','brand-2.png','brand-3.png','brand-4.png','brand-5.png','brand-6.png','brand-7.png','brand-8.png','brand-9.png','brand-10.png','brand-11.png','brand-12.png', 'brand-13.png','brand-14.png','brand-15.png', 'brand-16.png','brand-17.png','brand-18.png','brand-19.png']
+      };
+
+      // --- Auto-discovery of images from folders (works with Live Server directory listing) ---
+      const IMG_REGEX = /\.(png|jpe?g|svg|webp|gif)$/i;
+      async function listImages(base){
+        try {
+          const res = await fetch(base, { cache: 'no-store' });
+          if (!res.ok) return [];
+          const html = await res.text();
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          const hrefs = Array.from(doc.querySelectorAll('a[href]'))
+            .map(a => a.getAttribute('href') || '')
+            .filter(h => IMG_REGEX.test(h) && !h.includes('..'));
+          const normalized = hrefs
+          .map(h => {
+            const clean = (h || '').split('?')[0];
+            if (/^https?:/i.test(clean)) return clean; // absolute http(s)
+            if (clean.startsWith('/')) return clean;   // site‑absolute
+            return base + clean.replace(/^\.?\//,''); // relative -> join with base
+          })
+          .filter(Boolean);
+          return normalized;
+        } catch (e) {
+          console.warn('Directory listing not available for', base, e);
+          return [];
+        }
+      }
+      function shuffle(arr){
+        const a = arr.slice();
+        for(let i=a.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [a[i],a[j]] = [a[j],a[i]];
+        }
+        return a;
+      }
+
+      function useLocalStorage(key, init){
+        const [val, setVal] = useState(()=>{
+          try{const raw = localStorage.getItem(key);return raw?JSON.parse(raw):init}catch{return init}
+        });
+        useEffect(()=>{try{localStorage.setItem(key, JSON.stringify(val))}catch{}},[key,val]);
+        return [val,setVal];
+      }
+
+      // Hash router minimal (#/terms, #/privacy)
+      function useHashRoute(){
+        const get = ()=> (window.location.hash.replace('#/','')||'');
+        const [route,setRoute] = useState(get());
+        useEffect(()=>{
+          const on = ()=> setRoute(get());
+          window.addEventListener('hashchange', on); return ()=> window.removeEventListener('hashchange', on);
+        },[]);
+        const go = r=> { window.location.hash = '/' + r; setRoute(r) };
+        return [route,go];
+      }
+
+      // ---------- Generic Carousel ----------
+      function Carousel({ slides, render, autoMs=4500, dots=true, arrows=false }){
+        const [idx,setIdx] = useState(0);
+        const count = slides.length || 1;
+        const timer = useRef(null);
+        const hover = useRef(false);
+
+        const next = ()=> setIdx(i => (i+1)%count);
+        const prev = ()=> setIdx(i => (i-1+count)%count);
+
+        useEffect(()=>{
+          timer.current = setInterval(()=>{ if(!hover.current) next(); }, autoMs);
+          return ()=> clearInterval(timer.current);
+        },[autoMs,count]);
+
+        return (
+          <div className="carousel" onMouseEnter={()=>{hover.current=true}} onMouseLeave={()=>{hover.current=false}}>
+            <div className="carousel-track" style={{transform:`translateX(-${idx*100}%)`}}>
+              {slides.map((s,i)=> (
+                <div key={i} className="carousel-slide">{render(s,i)}</div>
+              ))}
+            </div>
+            {arrows && <>
+              <button className="arrow left" aria-label="prev" onClick={prev}>‹</button>
+              <button className="arrow right" aria-label="next" onClick={next}>›</button>
+            </>}
+            {dots && (
+              <div className="carousel-dots">
+                {slides.map((_,i)=>(
+                  <span key={i} className={`carousel-dot ${i===idx?'active':''}`} onClick={()=>setIdx(i)}></span>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      // ---------- Home sections ----------
+      function Home({t,lang}){
+        const [auto, setAuto] = useState({ hero: [], clients: [], brands: [], certs: [] });
+        useEffect(()=>{
+          (async ()=>{
+            const entries = await Promise.all(Object.entries(BASES).map(async ([k, b]) => [k, await listImages(b)]));
+            const obj = {};
+            entries.forEach(([k,v]) => obj[k] = shuffle(v));
+            setAuto(obj);
+          })();
+        },[]);
+
+        const heroImgs = (auto.hero && auto.hero.length ? auto.hero : ASSETS.hero.map(f=> BASES.hero + f));
+        const clientImgs = (auto.clients && auto.clients.length ? auto.clients : ASSETS.clients.map(f=> BASES.clients + f));
+        const brandImgs  = (auto.brands && auto.brands.length ? auto.brands : ASSETS.brands.map(f=> BASES.brands + f));
+        const certImgs   = (auto.certs && auto.certs.length ? auto.certs : ASSETS.certs.map(f=> BASES.certs + f));
+
+        const heroSlides = heroImgs.map((src)=> ({
+          img: src,
+          kicker: t.callNow,
+          title: lang==='ro'? 'SERVICII DE REPARAȚIE' : 'УСЛУГИ ПО РЕМОНТУ',
+          text: lang==='ro'? 'Diagnosticare, reparație și întreținere pentru echipamente IT.' : 'Диагностика, ремонт и обслуживание IT‑оборудования.',
+          cta:'#about'
+        }));
+
+        const clientsPages = Math.max(1, Math.ceil(clientImgs.length / 5));
+        const brandsPages  = Math.max(1, Math.ceil(brandImgs.length / 5));
+        const certImgsPages = Math.max(1, Math.ceil(certImgs.length / 3));
+
+        return (
+          <>
+            {/* HEADER 3: HERO SLIDER */}
+            <div className="hero" id="top">
+              <Carousel slides={heroSlides.length?heroSlides:[{img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1600&auto=format&fit=crop'}]} autoMs={5000} dots={true} arrows={true} render={(s)=> (
+                <div className="hero-slide">
+                  <img src={s.img} alt="hero" onError={(e)=>{console.warn('Hero image missing:', s.img); e.currentTarget.src='https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1600&auto=format&fit=crop';}}/>
+                  <div className="container hero-content">
+                    <span className="hero-kicker">{t.callNow}</span>
+                    <h1>{s.title|| (lang==='ro'? 'SERVICII DE REPARAȚIE' : 'УСЛУГИ ПО РЕМОНТУ')}</h1>
+                    <p style={{maxWidth:640,opacity:.95,marginBottom:18}}>{s.text || (lang==='ro'? 'Diagnosticare, reparație și întreținere pentru echipamente IT.' : 'Диагностика, ремонт и обслуживание IT‑оборудования.')}</p>
+                    <a href={s.cta||'#about'} className="btn">{t.heroBtn}</a>
+                  </div>
+                </div>
+              )} />
+            </div>
+
+            {/* ABOUT */}
+            <section id="about">
+              <div className="container">
+                <div className="section-title"><span>{t.aboutTitle}</span></div>
+                <p className="lead">{t.aboutText}</p>
+              </div>
+            </section>
+
+            {/* CLIENTS */}
+            <section id="clients" style={{background: 'var(--bg)'}}>
+              <div className="container">
+                <div className="section-title"><span>{t.clientsTitle}</span><span className="accent"></span></div>
+                <Carousel autoMs={4200} slides={Array.from({length: clientsPages}, (_,i)=>i)} render={(page)=> (
+                  <div className="logo-grid">
+                    {clientImgs.slice(page*5, page*5+5).map((src,i)=> (
+                      <div key={i} className="logo-box">{src? <img src={src} alt={`client-${i+1}`} onError={(e)=>{console.warn('Client logo missing:', src); e.currentTarget.src='https://via.placeholder.com/200x80?text=CLIENT';}}/> : <span style={{fontWeight:800}}>CLIENT</span>}</div>
+                    ))}
+                  </div>
+                )} />
+              </div>
+            </section>
+
+            {/* BRANDS */}
+            <section id="brands">
+              <div className="container">
+                <div className="section-title"><span>{t.brandsTitle}</span><span className="accent"></span></div>
+                <Carousel autoMs={4200} slides={Array.from({length: brandsPages}, (_,i)=>i)} render={(page)=> (
+                  <div className="logo-grid">
+                    {brandImgs.slice(page*5, page*5+5).map((src,i)=> (
+                      <div key={i} className="logo-box">{src? <img src={src} alt={`brand-${i+1}`} onError={(e)=>{console.warn('Brand logo missing:', src); e.currentTarget.src='https://via.placeholder.com/200x80?text=BRAND';}}/> : <span style={{fontWeight:800}}>BRAND</span>}</div>
+                    ))}
+                  </div>
+                )} />
+              </div>
+            </section>
+
+            {/* CERTIFICATES */}
+            <section id="certs" style={{background: 'var(--bg)'}}>
+              <div className="container">
+                <div className="section-title"><span>{t.certificatesTitle}</span><span className="accent"></span></div>
+                <Carousel autoMs={4800} slides={certImgs.length?certImgs:[
+                  'https://images.unsplash.com/photo-1616587891397-1e3c3d0f1fd4?q=80&w=1200&auto=format&fit=crop',
+                  'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1200&auto=format&fit=crop',
+                  'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1200&auto=format&fit=crop'
+                ]} render={(src,idx)=> (
+                  <div className="logo-grid">
+                    <img className="cert-img" src={src} alt={`cert-${idx+1}`} style={{width:'100%'}} onError={(e)=>{console.warn('Cert image missing:', src); e.currentTarget.src='https://via.placeholder.com/400x560?text=Certificat';}}/>
+                    <img className="cert-img" src={certImgs[(idx+1)%certImgs.length]} alt={`cert-${(idx+2)}`} style={{width:'100%'}} onError={(e)=>{console.warn('Cert image missing:', certImgs[(idx+1)%certImgs.length]); e.currentTarget.src='https://via.placeholder.com/400x560?text=Certificat';}}/>
+                    <img className="cert-img" src={certImgs[(idx+2)%certImgs.length]} alt={`cert-${(idx+3)}`} style={{width:'100%'}} onError={(e)=>{console.warn('Cert image missing:', certImgs[(idx+2)%certImgs.length]); e.currentTarget.src='https://via.placeholder.com/400x560?text=Certificat';}}/>
+                  </div>
+                )} />
+              </div>
+            </section>
+
+            {/* MAP */}
+            <section id="map" className="map">
+              <div className="container">
+                <div className="section-title"><span>{t.mapTitle}</span><span className="accent"></span></div>
+                <iframe loading="lazy" allowfullscreen="" referrerPolicy="no-referrer-when-downgrade"
+                  src="https://www.google.com/maps?q=Ultraservice%20SRL%20Calea%20Ie%C8%99ilor%2010%2C%20Chi%C8%99in%C4%83u&output=embed"></iframe>
+              </div>
+            </section>
+          </>
+        );
+      }
+
+function Terms({ lang }) {
+  return (
+    <section className="page">
+      <div className="container">
+        {lang === 'ro' ? (
+          <>
+            <h1>TERMENI ȘI CONDIȚII</h1>
+
+            <p>
+              Site-ul web <a href="https://ultraservice.md/" target="_blank" rel="noreferrer">https://ultraservice.md/</a> (în continuare „site”, „site web”, „web site”), dedicat prestarilor serviciilor garantie si contracost în mediul online, reprezintă proprietatea companiei “Ultraservice” SRL (în continuare „Service Centru”, „Centru de deservire”, „https://ultraservice.md/”, „compania”), cu sediul în mun. Chișinău, str. Ion Creanga 6v.
+            </p>
+            <p>
+              Prin utilizarea site-ului <a href="https://ultraservice.md/" target="_blank" rel="noreferrer">https://ultraservice.md/</a>, utilizatorul își exprimă acordul cu privire la condițiile specificate în „Termeni și condiții”. Dacă utilizatorul nu este de acord cu condițiile de față, acesta trebuie să se abțină de la utilizarea site-ului.
+            </p>
+            <p>
+              Service Centrul își rezervă dreptul de a modifica termenii și condițiile. Cea mai recentă versiune a termenilor și condițiilor de utilizare va putea fi vizualizată pe pagina curentă. Utilizatorul își asumă responsabilitatea de a monitoriza periodic modificările termenilor de față.
+            </p>
+
+            <h2>1. TERMENI GENERALI</h2>
+            <p>Termenii și condițiile de față reprezintă un acord și sunt în vigoare pe toată perioada utilizării website-ului.</p>
+            <p>
+              Service Centrul își rezervă dreptul de a bloca accesul la utilizarea site-ului și/sau serviciilor sale, fără notificare sau răspundere utlerioară, pentru orice utilizator, cu orice motiv care include dar nu se limitează la următoarele acțiuni: comportament lipsit de respect față de personalul Service Centrului; încălcarea condițiilor specificate în prezenta înțelegere; încălcarea reglementărilor legale.
+            </p>
+
+            <h3>Se interzice:</h3>
+            <ul>
+              <li>Orice încercare de a modifica, prin orice metodă, materialele și informațiile conținute pe acest site;</li>
+              <li>Scanarea sau testarea vulnerabilităților sistemelor/serviciilor fără acordul scris al Service Centrului;</li>
+              <li>Atacuri de tip „flooding/DOS” asupra serverelor;</li>
+              <li>Copierea/duplicarea/distribuirea materialelor de pe site fără permisiune;</li>
+              <li>Publicarea/transmiterea de materiale ilegale sau indecente prin intermediul site-ului.</li>
+            </ul>
+
+            <h2>2. DISPONIBILITATEA SERVICIILOR</h2>
+            <p>
+              Serviciile pot fi modificate/suspendate/întrerupte cu sau fără notificare, temporar sau permanent. Noii termeni intră în vigoare la publicare.
+            </p>
+
+            <h2>3. OBLIGAȚIUNILE UTILIZATORULUI</h2>
+            <p>Utilizatorul oferă date reale, exacte, actuale și complete.</p>
+            <p>
+              Pentru schimbarea adresei de ridicare/livrare, contactați <a href="mailto:office@ultraservice.md">office@ultraservice.md</a> sau numărul din secțiunea „Contacte”.
+            </p>
+            <p>
+              Dacă nu putem contacta clientul pentru confirmare, comanda se consideră anulată.
+            </p>
+            <p>
+              Pentru comenzi achitate online, dacă nu pot fi confirmate, suma se restituie automat în 3 zile lucrătoare pe cardul utilizat.
+            </p>
+            <p>
+              Se prezumă că utilizatorul este major sau are acordul părinților/tutorelui.
+            </p>
+
+            <h2>4. TERMENI DE EXECUTARE A COMENZII</h2>
+            <p>Solicitările online: 24/7/365; executare cât mai curând posibil, în limita resurselor disponibile.</p>
+            <p>Pentru detalii, contactați personalul Service Centrului.</p>
+
+            <h3>Modalități de plasare a comenzii</h3>
+            <ul>
+              <li>prin „Cabinet Personal” pe <a href="https://ultraservice.md/" target="_blank" rel="noreferrer">https://ultraservice.md/</a>;</li>
+              <li>prin servicii externe de livrare a dispozitivelor;</li>
+              <li>prin telefon, la numerele din „Contacte”.</li>
+            </ul>
+
+            <h3>Informații necesare</h3>
+            <ul>
+              <li>Nume și Prenume;</li>
+              <li>Adresă ridicare/livrare;</li>
+              <li>Telefon;</li>
+              <li>E-mail.</li>
+            </ul>
+
+            <h3>4.1 Plata comenzii</h3>
+            <p>Prețurile includ TVA; pot apărea corecții dacă un preț a fost afișat eronat.</p>
+            <p>
+              La preț incorect, clientul este informat și poate confirma la prețul corect sau anula. Pentru plăți în avans, suma se restituie.
+            </p>
+            <p>Prețurile pot fi ajustate pe site fără preaviz; prețul din comanda plasată nu se modifică.</p>
+
+            <h4>Metode de plată</h4>
+            <ul>
+              <li>Numerar la sediu;</li>
+              <li>Card bancar la sediu;</li>
+              <li>Online cu card bancar;</li>
+              <li>Virament la contul „Ultraservice” SRL.</li>
+            </ul>
+
+            <h3>4.2 Achitare online</h3>
+            <p>
+              Plată VISA/MasterCard prin interfața „B.C. Victoriabank S.A”; se completează datele cardului pe pagina procesatorului.
+            </p>
+
+            <h2>5. TERMENI ȘI CONDIȚII DE LIVRARE</h2>
+            <p>Ridicare de la sediu sau livrare la adresă; program livrare: Luni–Vineri 9:00–18:00.</p>
+            <p>Timp estimat ridicare/livrare: 24–48h după confirmare, în funcție de condiții.</p>
+            <p>
+              Clientul trebuie să fie disponibil la adresă; după apelul curierului se poate aștepta max. 10 minute, apoi comanda se consideră finalizată.
+            </p>
+
+            <h3>5.1 Prețul livrării</h3>
+            <p>Servicii pe întreg teritoriul RM; pot exista zone neacoperite. Costul se afișează la plasarea comenzii.</p>
+
+            <h3>5.2 Primirea comenzii</h3>
+            <p>La livrare/ridicare, clientul confirmă primirea/predarea.</p>
+            <p>
+              Pentru comenzi achitate online, curierul poate solicita act de identitate și confirmare tip/număr card. Confidențialitatea datelor este garantată.
+            </p>
+
+            <h3>5.3 Returnarea produselor</h3>
+            <p>Nemulțumit la livrare? Contactați Service Centrul; curierul nu răspunde de calitatea serviciilor.</p>
+            <p>Nu se returnează servicii de bună calitate după prestare; pentru calitate neconformă se remediează.</p>
+            <p>Reclamații privind calitatea: în 2 ore de la primire.</p>
+
+            <h3>5.4 Rambursarea banilor</h3>
+            <p>Banii se restituie prin aceeași metodă de plată.</p>
+            <ul>
+              <li>Numerar la sediu;</li>
+              <li>Transfer pe contul cardului în max. 14 zile calendaristice.</li>
+            </ul>
+
+            <h3>5.5 Reclamații</h3>
+            <ul>
+              <li>E-mail: <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>;</li>
+              <li>Telefon: +373 22 870 222, +373 22 837 777;</li>
+              <li>Adresă: str. Calea Ieșilor 10, CC Solaris, et. 3, Chișinău.</li>
+            </ul>
+            <p>Răspuns în max. 3 zile lucrătoare.</p>
+
+            <h2>6. LIPSA GARANȚIILOR</h2>
+            <p>Conținut „ca atare”, fără garanții exprese sau implicite.</p>
+
+            <h2>7. ELIBERAREA DE RĂSPUNDERE</h2>
+            <p>
+              Utilizarea pe propria răspundere; nu răspundem pentru prejudicii/viruși/atacuri rezultate din accesarea acestui site.
+            </p>
+
+            <h2>8. CLAUZE FINALE</h2>
+            <p>Legislația RM se aplică. Litigiile se soluționează conform legii.</p>
+            <p>
+              Prezentul acord nu creează relații de agenție/parteneriat/muncă între Utilizator și Centru de deservire.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1>ПРАВИЛА И УСЛОВИЯ</h1>
+
+            <p>
+              Веб-сайт <a href="https://ultraservice.md/" target="_blank" rel="noreferrer">https://ultraservice.md/</a> (далее «сайт») — собственность компании «Ultraservice» SRL (далее «Сервис-центр»), г. Кишинёв, ул. Иона Крянгэ 6v.
+            </p>
+            <p>
+              Посещая сайт, пользователь подтверждает согласие с настоящими Правилами. Если вы не согласны, пожалуйста, не используйте сайт.
+            </p>
+            <p>
+              Сервис-центр может изменять Правила без уведомления; актуальная версия всегда публикуется на этой странице.
+            </p>
+
+            <h2>1. Общие положения</h2>
+            <p>Правила действуют весь период использования сайта.</p>
+            <p>
+              Сервис-центр может блокировать доступ к сайту/услугам без уведомления, в т.ч. за неуважительное поведение, нарушение Правил и законодательства.
+            </p>
+
+            <h3>Запрещается</h3>
+            <ul>
+              <li>Изменять материалы сайта и иным образом вмешиваться в его работу;</li>
+              <li>Сканировать/тестировать уязвимости без письменного согласия;</li>
+              <li>Проводить атаки «flooding/DOS» на сервера;</li>
+              <li>Копировать/дублировать/распространять материалы без разрешения;</li>
+              <li>Публиковать незаконные/оскорбительные/непристойные материалы через сайт.</li>
+            </ul>
+
+            <h2>2. Доступность услуг</h2>
+            <p>Услуги могут изменяться/приостанавливаться/прекращаться; новые условия действуют с момента публикации.</p>
+
+            <h2>3. Обязанности пользователя</h2>
+            <p>Пользователь предоставляет точные и актуальные данные.</p>
+            <p>Для изменения адреса забора/доставки свяжитесь с нами: <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>.</p>
+            <p>Если не удаётся связаться для подтверждения, заказ аннулируется.</p>
+            <p>При онлайн-оплате и невозможности подтверждения сумма возвращается на карту в течение 3 рабочих дней.</p>
+            <p>Предполагается, что пользователь совершеннолетний или имеет согласие родителей/опекуна.</p>
+
+            <h2>4. Сроки выполнения заказа</h2>
+            <p>Заявки принимаются 24/7/365; выполнение — как можно быстрее, исходя из доступности ресурсов.</p>
+
+            <h3>Способы оформления</h3>
+            <ul>
+              <li>через «Личный кабинет» на сайте;</li>
+              <li>через службы доставки устройств;</li>
+              <li>по телефону (раздел «Контакты»).</li>
+            </ul>
+
+            <h3>Необходимые данные</h3>
+            <ul>
+              <li>ФИО;</li>
+              <li>Адрес забора/доставки;</li>
+              <li>Телефон;</li>
+              <li>E-mail.</li>
+            </ul>
+
+            <h3>4.1 Оплата заказа</h3>
+            <p>Цены с НДС; при ошибке в цене — уведомим для подтверждения по верной цене или отмены, предоплата возвращается.</p>
+            <p>Цены на сайте могут обновляться без уведомления; цена в оформленном заказе не меняется.</p>
+
+            <h4>Способы оплаты</h4>
+            <ul>
+              <li>Наличные в офисе;</li>
+              <li>Банковская карта в офисе;</li>
+              <li>Онлайн-оплата картой;</li>
+              <li>Банковский перевод на счёт «Ultraservice» SRL.</li>
+            </ul>
+
+            <h3>4.2 Онлайн-оплата</h3>
+            <p>Оплата VISA/MasterCard через «B.C. Victoriabank S.A» на защищённой странице процессинга.</p>
+
+            <h2>5. Условия доставки</h2>
+            <p>Самовывоз или доставка; режим: Пн–Пт 9:00–18:00. Срок — 24–48 ч с момента подтверждения.</p>
+            <p>Клиент обязан быть доступен по адресу; после звонка курьер ожидает до 10 минут, далее заказ считается завершённым.</p>
+
+            <h3>5.1 Стоимость доставки</h3>
+            <p>Работаем по всей РМ; возможны неохваченные зоны. Стоимость отображается при оформлении.</p>
+
+            <h3>5.2 Получение заказа</h3>
+            <p>Клиент (или представитель) проверяет и подтверждает получение/передачу.</p>
+            <p>Для оплаченных онлайн заказов курьер может запросить документ и подтверждение типа/номера карты.</p>
+
+            <h3>5.3 Возврат</h3>
+            <p>При претензиях по количеству/качеству — обращайтесь в Сервис-центр; курьер не отвечает за качество услуг.</p>
+            <p>Возврат качественно оказанных услуг не производится; при ненадлежащем качестве — устраняются недостатки.</p>
+            <p>Претензии по качеству — в течение 2 часов с момента получения.</p>
+
+            <h3>5.4 Возврат денег</h3>
+            <p>Возврат тем же способом оплаты: наличными в офисе либо на карту в течение 14 календарных дней.</p>
+
+            <h3>5.5 Жалобы</h3>
+            <ul>
+              <li>E-mail: <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>;</li>
+              <li>Телефон: +373 22 870 222, +373 22 837 777;</li>
+              <li>Адрес: ул. Каля Ешилор 10, ТРЦ Solaris, эт. 3, Кишинёв.</li>
+            </ul>
+            <p>Ответ — в течение 3 рабочих дней.</p>
+
+            <h2>6. Отсутствие гарантий</h2>
+            <p>Контент предоставляется «как есть», без каких-либо гарантий.</p>
+
+            <h2>7. Ограничение ответственности</h2>
+            <p>Использование сайта — на риск пользователя; не отвечаем за убытки/вред от доступа к сайту и его содержимому.</p>
+
+            <h2>8. Заключительные положения</h2>
+            <p>Применяется законодательство Республики Молдова; споры решаются по закону.</p>
+            <p>Настоящее соглашение не создаёт агентских/трудовых/партнёрских отношений.</p>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+
+function Privacy({ lang }) {
+  return (
+    <section className="page">
+      <div className="container">
+        {lang === 'ro' ? (
+          <>
+            <h1>POLITICA DE CONFIDENȚIALITATE</h1>
+
+            <h2>1. GENERALITĂȚI</h2>
+            <p>
+              Prin utilizarea site-ului <a href="https://www.ultraservice.md" target="_blank" rel="noreferrer">www.ultraservice.md</a>, utilizatorul își exprimă acordul cu privire la condițiile specificate în „Politica de confidențialitate”. Dacă utilizatorul nu este de acord cu condițiile de față, acesta trebuie să se abțină de la utilizarea site-ului.
+            </p>
+            <p>
+              Utilizarea ulterioară a site-ului confirmă consimțământul utilizatorului pentru prelucrarea datelor sale cu caracter personal și este valabil din ziua în care site-ul web al companiei “Ultraservice” SRL a început să fie utilizat și până în ziua în care consimțământul este retras, contactând reprezentantul companiei prin modul stabilit în această politică.
+            </p>
+            <p>
+              “Ultraservice” SRL își rezervă dreptul de a modifica și actualiza condițiile politicii de față fără o înștiințare prealabilă. Cea mai recentă versiune a prezentei politici va putea fi mereu accesată pe prezentul site.
+            </p>
+            <p>
+              Recomandările utilizatorilor noștri sunt mereu binevenite, astfel vă îndemnăm să ne expediați ideile, sugestiile, părerile sau reclamațiile Dvs la: <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>
+            </p>
+
+            <h2>2. COLECTAREA DATELOR CU CARACTER PERSONAL</h2>
+            <p>Prin „date cu caracter personal” se înțeleg, fără a se limita la:</p>
+            <ul>
+              <li>Nume, Prenume, Telefon, E-mail, Adresă de livrare/domiciliu (transmise la plasarea comenzii sau în timpul utilizării site-ului);</li>
+              <li>Date transmise automat (inclusiv cookie) și informații despre dispozitiv.</li>
+            </ul>
+            <p>
+              Plățile online se efectuează prin „B.C. Victoriabank S.A” (VISA/MasterCard) pe conexiune securizată.
+            </p>
+            <p>
+              “Ultraservice” SRL nu prelucrează datele cardurilor bancare; responsabilitatea revine exclusiv „B.C. Victoriabank S.A”.
+            </p>
+
+            <h2>3. PRELUCRAREA DATELOR CU CARACTER PERSONAL</h2>
+            <p>Prelucrarea are loc doar cu acordul conștient al utilizatorului; paginile de colectare conțin referință la prezenta politică.</p>
+            <p>Scopuri de prelucrare:</p>
+            <ul>
+              <li>Procesarea comenzilor;</li>
+              <li>Evaluarea calității serviciilor;</li>
+              <li>Personalizarea serviciilor;</li>
+              <li>Îmbunătățirea site-ului și experienței de utilizare;</li>
+              <li>Studii statistice;</li>
+              <li>Informări despre servicii noi;</li>
+              <li>Contabilitatea consumatorilor.</li>
+            </ul>
+            <p>În plus, prelucrăm automat date anonime pentru analiză și optimizare.</p>
+
+            <h2>4. COOKIES</h2>
+            <p>Cookie-uri temporare (pentru sesiune) și persistente (săptămâni/luni) pot fi folosite pentru a recunoaște dispozitivul la vizite repetate. Datele sunt anonime.</p>
+            <h3>Mod de utilizare</h3>
+            <p>Analize statistice anonime (trafic/vizite) și afișare anunțuri relevante (Google Ads/Analytics). Informații din cookie pot fi comunicate partenerilor în scopuri statistice și de publicitate.</p>
+
+            <h2>5. SECURITATEA DATELOR PERSONALE</h2>
+            <p>
+              Prelucrarea se efectuează conform Legii nr.133/2011 RM. Păstrăm confidențialitatea și prevenim accesul neautorizat. Totuși, transmiterea prin internet nu poate fi garantată absolut; nu răspundem pentru atacuri care pot expune datele.
+            </p>
+            <p>
+              Nu răspundem pentru cazurile în care utilizatorul publică voluntar date personale sau accesează servicii/website-uri terțe.
+            </p>
+
+            <h2>6. DEZVĂLUIREA DATELOR PERSONALE</h2>
+            <p>Dezvăluirea fără consimțământ este posibilă doar în cazuri de litigii privind plăți (bănci, organizații de carduri, furnizori) și conform legii către autorități.</p>
+
+            <h2>7. ȘTERGEREA DATELOR PERSONALE</h2>
+            <p>Solicitările de ștergere se trimit la <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>.</p>
+            <p>Prin utilizarea site-ului, utilizatorul confirmă acceptarea acestei politici.</p>
+          </>
+        ) : (
+          <>
+            <h1>ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ</h1>
+
+            <h2>1. Общие положения</h2>
+            <p>
+              Пользуясь сайтом <a href="https://www.ultraservice.md" target="_blank" rel="noreferrer">www.ultraservice.md</a>, пользователь соглашается с настоящей Политикой. При несогласии — воздержитесь от использования сайта.
+            </p>
+            <p>
+              Дальнейшее использование подтверждает согласие на обработку персональных данных до момента его отзыва (по правилам, указанным в данной политике).
+            </p>
+            <p>«Ultraservice» SRL может обновлять Политику без уведомления; актуальная версия — на этой странице.</p>
+            <p>Предложения и замечания присылайте на <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>.</p>
+
+            <h2>2. Сбор персональных данных</h2>
+            <ul>
+              <li>Данные, предоставленные пользователем: ФИО, телефон, e-mail, адрес доставки/проживания;</li>
+              <li>Данные, передаваемые автоматически (cookie и информация об устройстве).</li>
+            </ul>
+            <p>Онлайн-оплаты проводятся через «B.C. Victoriabank S.A» (VISA/MasterCard) по защищенному соединению.</p>
+            <p>«Ultraservice» SRL не обрабатывает реквизиты банковских карт; ответственность несёт «B.C. Victoriabank S.A».</p>
+
+            <h2>3. Обработка персональных данных</h2>
+            <p>Обрабатываем только при осознанном согласии пользователя; страницы сбора содержат ссылку на Политику.</p>
+            <p>Цели обработки:</p>
+            <ul>
+              <li>оформление заказов;</li>
+              <li>оценка качества услуг;</li>
+              <li>персонализация сервиса;</li>
+              <li>улучшение сайта и UX;</li>
+              <li>статистические исследования;</li>
+              <li>информирование о новых услугах;</li>
+              <li>учёт потребителей.</li>
+            </ul>
+            <p>Дополнительно обрабатываются обезличенные данные для аналитики и оптимизации.</p>
+
+            <h2>4. Cookie-файлы</h2>
+            <p>Используются сессионные и долговременные cookie; они помогают узнавать устройство при повторных визитах и не идентифицируют конкретного человека.</p>
+            <h3>Как используются cookie</h3>
+            <p>Для анонимной статистики (трафик/визиты) и показа релевантной рекламы (Google Ads/Analytics). Информация может передаваться партнёрам для статистики и оптимизации рекламы.</p>
+
+            <h2>5. Безопасность персональных данных</h2>
+            <p>
+              Обработка по Закону РМ №133/2011. Мы обеспечиваем конфиденциальность и предотвращаем несанкционированный доступ, однако абсолютная безопасность передачи через интернет не гарантируется; за атаки, повлекшие утечку, ответственности не несём.
+            </p>
+            <p>Мы не отвечаем, если пользователь добровольно публикует свои данные либо переходит на сторонние сайты/сервисы.</p>
+
+            <h2>6. Раскрытие персональных данных</h2>
+            <p>Возможна без согласия только при спорах по платежам (банки, платёжные системы, поставщики) и по закону — госорганам.</p>
+
+            <h2>7. Удаление персональных данных</h2>
+            <p>Запрос на удаление направляйте на <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>.</p>
+            <p>Пользуясь сайтом, вы подтверждаете согласие с данной Политикой.</p>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+
+
+// ---------- Backto Top ----------
+function BackToTop(){
+  const [show, setShow] = React.useState(false);
+
+  React.useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 400);
+    onScroll();
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <button
+      className={`toTop ${show ? 'show' : ''}`}
+      aria-label="Înapoi sus"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      title="Înapoi sus"
+    >
+      <i className="bi bi-chevron-up" style={{fontSize:20}}></i>
+    </button>
+  );
+}
+
+
+      // ---------- Shell (Header comun + Footer comun + Router) ----------
+      function App(){
+        const [lang,setLang] = useLocalStorage('lang','ro');
+        useEffect(()=>{ document.documentElement.lang = lang; },[lang]);
+        const t = DICT[lang];
+        const [route, go] = useHashRoute();
+        
+
+        return (
+          <>
+            {/* HEADER 1 */}
+            <header className="topbar">
+              <div className="container row">
+                <a href="#/" className="logo" aria-label="Ultraservice SRL" onClick={(e)=>{ e.preventDefault(); go(''); }}>
+                  <img src="./assets/logo/logo.png" alt="Ultraservice SRL" className="logo-img" loading="eager" decoding="async" />
+                </a>
+                <nav aria-label="primary">
+                  <ul>
+                    <li><a href="#/" onClick={(e)=>{e.preventDefault();go('')}}>{t.menu.home}</a></li>
+                    <li><a href="#/terms" onClick={(e)=>{e.preventDefault();go('terms')}}>{t.menu.terms}</a></li>
+                    <li><a href="#/privacy" onClick={(e)=>{e.preventDefault();go('privacy')}}>{t.menu.privacy}</a></li>
+                    <li><a href="#contact">{t.menu.contact}</a></li>
+                  </ul>
+                </nav>
+                <div className="lang" role="group" aria-label="language switcher">
+                  <button onClick={()=>setLang('ro')} className={lang==='ro'?'active':''}>RO</button>
+                  <button onClick={()=>setLang('ru')} className={lang==='ru'?'active':''}>RU</button>
+                </div>
+              </div>
+            </header>
+
+            {/* HEADER 2 */}
+            <div className="infobar">
+              <div className="infobar-container">
+                <div className="container row">
+                  <div className="info-item"><span className="info-ico"><i class="bi bi-telephone-fill"></i></span>
+                    <div className="info-text">
+                      <div style={{fontSize:12, color:'var(--muted)'}}>{t.phone}</div>
+                      <a href="tel:+37322837777">(+373 22) 837-777</a>
+                    </div>
+                  </div>
+                  <div className="info-item"><span className="info-ico"><i class="bi bi-envelope-fill"></i></span>
+                    <div className="info-text">
+                      <div style={{fontSize:12, color:'var(--muted)'}}>{t.email}</div>
+                      <a href="mailto:office@ultraservice.md">office@ultraservice.md</a>
+                    </div>
+                  </div>
+                  <div className="info-item"><span className="info-ico"><i class="bi bi-geo-alt-fill"></i></span>
+                    <div className="info-text">
+                      <div style={{fontSize:12, color:'var(--muted)'}}>{t.address}</div>
+                        <a href="https://maps.google.com/?q=Calea%20Ie%C8%99ilor%2010%2C%20Chi%C8%99in%C4%83u" target="_blank" rel="noreferrer">
+                          {lang === 'ro' ? 'Calea Ieșilor 10, Chișinău' : 'ул. Каля Ешилор 10, Кишинёв'}
+                        </a>
+                      </div>
+                  </div>
+                </div>
+                <div className="hotline">
+                  <div className="hotline-row">
+                    <i class="bi bi-telephone-fill"></i> <strong>{t.hotline}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <main>
+              {route === '' && <Home t={t} lang={lang} />}
+              {route === 'terms' && <Terms lang={lang} />}
+              {route === 'privacy' && <Privacy lang={lang} />}
+            </main>
+
+            <BackToTop />
+
+            {/* FOOTER (comun) */}
+            <footer id="contact" className="footer">
+              <div className="container" style={{padding:'40px 16px'}}>
+                <div className="cols">
+                  <div className="col1">
+                    <h4>{t.companyTitle}</h4>
+                    <div className="item"><div className="ico"><i class="bi bi-buildings-fill"></i></div><div>
+                      <div style={{fontWeight:700}}>{t.company.name}</div>
+                      <div className="meta">{t.company.legalAddress}</div>
+                    </div></div>
+                    <div className="item"><div className="ico"><i class="bi bi-receipt"></i></div><div>
+                      <div>{t.company.tax}: <strong>{t.company.taxId}</strong></div>
+                      <div>{t.company.vat}: <strong>{t.company.vatId}</strong></div>
+                    </div></div>
+                    <div className="item"><a href="#/terms" onClick={(e)=>{e.preventDefault(); location.hash='/terms';}}>{t.menu.terms}</a></div>
+                    <div className="item"><a href="#/privacy" onClick={(e)=>{e.preventDefault(); location.hash='/privacy';}}>{t.menu.privacy}</a></div>
+                  </div>
+
+                  <div className="col2">
+                    <h4>{t.bankTitle}</h4>
+                    <div className="item"><div className="ico"><i class="bi bi-bank"></i></div><div>{t.bank.code}</div></div>
+                    <div className="item"><div className="ico"><i class="bi bi-credit-card-2-front-fill"></i></div><div><strong>{t.bank.settlement}</strong></div></div>
+                    <div className="item"><div className="ico"><i class="bi bi-hash"></i></div><div>IBAN: <strong>{t.bank.iban}</strong></div></div>
+                  </div>
+
+                  <div className="col3">
+                    <h4>{t.contactTitle}</h4>
+                    <div className="item"><div className="ico"><i class="bi bi-geo-alt-fill"></i></div><a href="https://maps.google.com/?q=Calea%20Ie%C8%99ilor%2010%2C%20Chi%C8%99in%C4%83u" target="_blank" rel="noreferrer">{t.contact.addr}</a></div>
+                    <div className="item"><div className="ico"><i class="bi bi-envelope-fill"></i></div><a href="mailto:office@ultraservice.md">office@ultraservice.md</a></div>
+                    <div className="item"><div className="ico"><i class="bi bi-telephone-fill"></i></div><a href="tel:+37322837777">(+373 22) 837-777</a></div>
+                    <div className="item"><div className="ico"><i class="bi bi-globe2"></i></div><a href="http://ultraservice.md" target="_blank" rel="noreferrer">{t.contact.site}</a></div>
+                    <div className="item meta"><i class="bi bi-clock"></i>&nbsp; {t.contact.work}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="footer-bottom">
+                <div className="container" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <div>
+                    Copyright © {new Date().getFullYear()}{" "}
+                    <a href="http://ultraservice.md" target="_blank" rel="noreferrer">Ultraservice SRL</a>. {t.copyright}
+                  </div>
+                  <div>
+                    <div className="lang" role="group" aria-label="language switcher footer">
+                      <button onClick={()=>{location.hash='/';}} style={{display:'none'}}></button>
+                      <button onClick={()=>{document.documentElement.scrollTo({top:0,behavior:'smooth'});}} style={{display:'none'}}></button>
+                      <button onClick={()=>setLang('ro')} className={lang==='ro'?'active':''}>RO</button>
+                      <button onClick={()=>setLang('ru')} className={lang==='ru'?'active':''}>RU</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </footer>
+          </>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App/>);
+    </script>
+  </body>
+</html>

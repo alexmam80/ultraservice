@@ -25,10 +25,10 @@
       a{color:inherit;text-decoration:none}
       img{max-width:100%;display:block}
       .container{max-width:1200px;margin:0 auto;padding:0 16px}
+      @media (max-width:960px){#about .container {flex-direction: column!important;}
+                              .lead{width: 100%!important;}
+      } 
       #about .container {max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-around; flex-direction: row; align-items: center;}
-      @media (max-width:960px){#about .container {max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-around; flex-direction: column; align-items: center;}
-                              .lead{width: 100%;}
-                              }
       .lead{width: 50%;}
       .btn{display:inline-block;background:var(--brand);color:#fff;padding:12px 18px;border-radius:6px;font-weight:600;transition:filter .2s}
       .btn:hover{filter:brightness(.95)}
@@ -36,11 +36,10 @@
       /* HEADER 1: top bar with logo, menu, lang switch */
       .topbar{border-bottom:1px solid #eee}
       .topbar{position: sticky; top: 0; z-index: 1000; background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
-      @media (max-width:960px){ .topbar .row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0; flex-direction: column;} }
       .topbar .row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
       .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:22px }
       .logo-img { height:70px; width:auto; display:block }   /* ajustează 40 dacă vrei mai mare */
-      @media (max-width:960px){ .logo-img{ height:34px } }
+      @media (max-width:960px){ .logo-img{ height:34px }.topbar .row{flex-direction: column;} }
 
       nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0}
       nav a{font-weight:600}
@@ -50,17 +49,21 @@
       .lang button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
 
       /* HEADER 2: info band */
-      .infobar{background:#f8f8f8}
-      .infobar-container{display: flex; justify-self: center; width: 1200px;}
-      .infobar .row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:14px 0;align-items:center; width: 70%}
-      .info-item{display:flex;align-items:center;gap:10px}
-      .info-ico{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #eee;display:grid;place-items:center;color:var(--brand);font-size:16px}
-      .info-ico:hover{scale:1.2}
-      .info-text a:hover{color:var(--brand)}
-      .hotline{background:var(--brand);color:#fff; width: 30%;padding-bottom: 4px; margin-top: 33px; position: relative; float:right; }
-      @media (min-width: 1200px) {.hotline:after {content: ""; width: 500px; height: 100%; background-color: var(--brand); left: 100%; top: 0px; position: absolute;}}
-      .hotline-row{margin: 10px 10px;}
-      .hotline .row{display:flex;justify-content:center; padding:10px 0; gap:10px}
+        .infobar{background:#f8f8f8}
+        .infobar-container{display: flex; justify-self: center; width: 1200px;}
+        .infobar .row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:14px 0;align-items:center; width: 70%}
+        .info-item{display:flex;align-items:center;gap:10px}
+        .info-ico{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #eee;display:grid;place-items:center;color:var(--brand);font-size:16px}
+        .info-ico:hover{scale:1.2}
+        .info-text a:hover{color:var(--brand)}
+        .hotline{background:var(--brand);color:#fff; width: 30%;padding-bottom: 4px; margin-top: 33px; position: relative; float:right; }
+        @media (min-width: 1200px) {.hotline:after {content: ""; width: 5000px; height: 100%; background-color: var(--brand); left: 100%; top: 0px; position: absolute;}}
+        .hotline-row{margin: 10px 10px;}
+        .hotline .row{display:flex;justify-content:center; padding:10px 0; gap:10px}
+        @media (max-width: 1200px){
+          .hotline {margin-top: 0;display: flex; align-items: center;} .infobar-container{ width: 100%;}
+        }
+      
       
 
       /* HEADER 3: hero slider */
@@ -101,6 +104,7 @@
 
       .cert-img{border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
       #certs .logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;justify-items:center;align-items:start}
+      @media (max-width: 980px){#certs .logo-grid {grid-template-columns: auto;}}
       #certs .logo-grid .cert-img{width:100%;height:auto}
 
       /* Map */
@@ -126,7 +130,7 @@
       /* Responsive */
       @media (max-width: 960px){
         .infobar .row{grid-template-columns:1fr}
-        .logo-grid{flex-wrap:wrap}
+        .logo-grid{flex-direction: row; flex-wrap: nowrap;}
         .logo-box{min-width:44%}
         .footer .cols{grid-template-columns:1fr}
         .hero h1{font-size:34px}
@@ -350,6 +354,26 @@
         );
       }
 
+
+      // ---------- Carousel max980px ----------
+      function useMedia(query){
+        const get = () => window.matchMedia(query).matches;
+        const [match, setMatch] = React.useState(get);
+        React.useEffect(() => {
+          const mql = window.matchMedia(query);
+          const on = e => setMatch(e.matches);
+          if (mql.addEventListener) mql.addEventListener('change', on);
+          else mql.addListener(on);
+          setMatch(mql.matches);
+          return () => {
+            if (mql.removeEventListener) mql.removeEventListener('change', on);
+            else mql.removeListener(on);
+          };
+        }, [query]);
+        return match;
+      }
+
+
       // ---------- Home sections ----------
       function Home({t,lang}){
         const [auto, setAuto] = useState({ hero: [], clients: [], brands: [], certs: [] });
@@ -375,9 +399,17 @@
           cta:'#about'
         }));
 
-        const clientsPages = Math.max(1, Math.ceil(clientImgs.length / 5));
-        const brandsPages  = Math.max(1, Math.ceil(brandImgs.length / 5));
-        const certImgsPages = Math.max(1, Math.ceil(certImgs.length / 3));
+
+        const isNarrow = useMedia('(max-width: 980px)');
+
+        const CLIENTS_PER_PAGE = isNarrow ? 1 : 5;
+        const BRANDS_PER_PAGE  = isNarrow ? 1 : 5;
+        const CERTS_PER_PAGE   = isNarrow ? 1 : 3;
+
+        const clientsPages = Math.max(1, Math.ceil(clientImgs.length / CLIENTS_PER_PAGE));
+        const brandsPages  = Math.max(1, Math.ceil(brandImgs.length  / BRANDS_PER_PAGE));
+        const certPages    = Math.max(1, Math.ceil(certImgs.length   / CERTS_PER_PAGE));
+
 
         return (
           <>
@@ -408,13 +440,22 @@
             <section id="clients" style={{background: 'var(--bg)'}}>
               <div className="container">
                 <div className="section-title"><span>{t.clientsTitle}</span><span className="accent"></span></div>
-                <Carousel autoMs={4200} slides={Array.from({length: clientsPages}, (_,i)=>i)} render={(page)=> (
-                  <div className="logo-grid">
-                    {clientImgs.slice(page*5, page*5+5).map((src,i)=> (
-                      <div key={i} className="logo-box">{src? <img src={src} alt={`client-${i+1}`} onError={(e)=>{console.warn('Client logo missing:', src); e.currentTarget.src='https://via.placeholder.com/200x80?text=CLIENT';}}/> : <span style={{fontWeight:800}}>CLIENT</span>}</div>
-                    ))}
-                  </div>
-                )} />
+                  <Carousel autoMs={4200}
+                    slides={Array.from({length: clientsPages}, (_,i)=>i)}
+                    render={(page)=> (
+                      <div className="logo-grid">
+                        {clientImgs
+                          .slice(page*CLIENTS_PER_PAGE, page*CLIENTS_PER_PAGE + CLIENTS_PER_PAGE)
+                          .map((src,i)=> (
+                            <div key={i} className="logo-box">
+                              {src
+                                ? <img src={src} alt={`client-${page*CLIENTS_PER_PAGE + i + 1}`}
+                                      onError={(e)=>{console.warn('Client logo missing:', src); e.currentTarget.src='https://via.placeholder.com/200x80?text=CLIENT';}}/>
+                                : <span style={{fontWeight:800}}>CLIENT</span>}
+                            </div>
+                        ))}
+                      </div>
+                    )}/>
               </div>
             </section>
 
@@ -422,13 +463,22 @@
             <section id="brands">
               <div className="container">
                 <div className="section-title"><span>{t.brandsTitle}</span><span className="accent"></span></div>
-                <Carousel autoMs={4200} slides={Array.from({length: brandsPages}, (_,i)=>i)} render={(page)=> (
-                  <div className="logo-grid">
-                    {brandImgs.slice(page*5, page*5+5).map((src,i)=> (
-                      <div key={i} className="logo-box">{src? <img src={src} alt={`brand-${i+1}`} onError={(e)=>{console.warn('Brand logo missing:', src); e.currentTarget.src='https://via.placeholder.com/200x80?text=BRAND';}}/> : <span style={{fontWeight:800}}>BRAND</span>}</div>
-                    ))}
-                  </div>
-                )} />
+                  <Carousel autoMs={4200}
+                    slides={Array.from({length: brandsPages}, (_,i)=>i)}
+                    render={(page)=> (
+                      <div className="logo-grid">
+                        {brandImgs
+                          .slice(page*BRANDS_PER_PAGE, page*BRANDS_PER_PAGE + BRANDS_PER_PAGE)
+                          .map((src,i)=> (
+                            <div key={i} className="logo-box">
+                              {src
+                                ? <img src={src} alt={`brand-${page*BRANDS_PER_PAGE + i + 1}`}
+                                      onError={(e)=>{console.warn('Brand logo missing:', src); e.currentTarget.src='https://via.placeholder.com/200x80?text=BRAND';}}/>
+                                : <span style={{fontWeight:800}}>BRAND</span>}
+                            </div>
+                        ))}
+                      </div>
+                    )} />
               </div>
             </section>
 
@@ -436,17 +486,19 @@
             <section id="certs" style={{background: 'var(--bg)'}}>
               <div className="container">
                 <div className="section-title"><span>{t.certificatesTitle}</span><span className="accent"></span></div>
-                <Carousel autoMs={4800} slides={certImgs.length?certImgs:[
-                  'https://images.unsplash.com/photo-1616587891397-1e3c3d0f1fd4?q=80&w=1200&auto=format&fit=crop',
-                  'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1200&auto=format&fit=crop',
-                  'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1200&auto=format&fit=crop'
-                ]} render={(src,idx)=> (
-                  <div className="logo-grid">
-                    <img className="cert-img" src={src} alt={`cert-${idx+1}`} style={{width:'100%'}} onError={(e)=>{console.warn('Cert image missing:', src); e.currentTarget.src='https://via.placeholder.com/400x560?text=Certificat';}}/>
-                    <img className="cert-img" src={certImgs[(idx+1)%certImgs.length]} alt={`cert-${(idx+2)}`} style={{width:'100%'}} onError={(e)=>{console.warn('Cert image missing:', certImgs[(idx+1)%certImgs.length]); e.currentTarget.src='https://via.placeholder.com/400x560?text=Certificat';}}/>
-                    <img className="cert-img" src={certImgs[(idx+2)%certImgs.length]} alt={`cert-${(idx+3)}`} style={{width:'100%'}} onError={(e)=>{console.warn('Cert image missing:', certImgs[(idx+2)%certImgs.length]); e.currentTarget.src='https://via.placeholder.com/400x560?text=Certificat';}}/>
-                  </div>
-                )} />
+                  <Carousel autoMs={4800}
+                    slides={Array.from({length: certPages}, (_,i)=>i)}
+                    render={(page)=> (
+                      <div className="logo-grid">
+                        {certImgs
+                          .slice(page*CERTS_PER_PAGE, page*CERTS_PER_PAGE + CERTS_PER_PAGE)
+                          .map((src,i)=> (
+                            <img key={i} className="cert-img" src={src}
+                                alt={`cert-${page*CERTS_PER_PAGE + i + 1}`} style={{width:'100%'}}
+                                onError={(e)=>{console.warn('Cert image missing:', src); e.currentTarget.src='https://via.placeholder.com/400x560?text=Certificat';}}/>
+                        ))}
+                      </div>
+                    )} />
               </div>
             </section>
 
@@ -1009,6 +1061,3 @@ function BackToTop(){
     </script>
   </body>
 </html>
-
-
-
